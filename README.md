@@ -8,6 +8,8 @@ The project parses Spotify's JSON streaming history and organizes the data into 
 
 ```text
 spotify-db/
+├── docs/
+│   └── er-schema.png
 ├── src/
 │   ├── database.py
 │   ├── models.py
@@ -28,6 +30,10 @@ spotify-db/
 
 * **`create_database.py`** — runs the complete pipeline to create and populate the database from a Spotify export.
 
+### `docs/`
+
+* **`er-schema.png`** — simplified Entity-Relationship diagram of the database schema.
+
 ## Database schema
 
 The database currently consists of the following tables:
@@ -39,18 +45,9 @@ The database currently consists of the following tables:
 * `platforms`
 * `listens`
 
-The relationships are structured around the hierarchy:
+The simplified Entity-Relationship schema is shown below:
 
-```text
-User
- └── Platform
-      └── Listen
-           └── Song
-                └── Album
-                     └── Artist
-```
-
-A `listen` represents an individual streaming event and stores information such as timestamp, playback duration, platform, country, and playback context.
+![Simplified ER schema](docs/simplified_ER_schema.png)
 
 ## Requirements
 
@@ -58,11 +55,13 @@ A `listen` represents an individual streaming event and stores information such 
 * MySQL
 * Python packages listed in `requirements.txt`
 
-Install the dependencies with:
+Install the Python dependencies with:
 
 ```bash
 pip install -r requirements.txt
 ```
+
+A running MySQL Server installation is also required.
 
 ## Usage
 
@@ -88,7 +87,7 @@ The update process will identify new artists, albums, songs, platforms, and list
 
 Add notebooks for exploring the resulting database and analyzing listening habits through statistics and visualizations.
 
-Planned analyses include areas such as:
+Planned analyses include:
 
 * Listening activity over time
 * Most played artists, albums, and songs
