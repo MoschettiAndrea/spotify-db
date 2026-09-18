@@ -17,6 +17,8 @@ spotify-db/
 │   └── parser.py
 ├── scripts/
 │   └── create_database.py
+├── .env.example
+├── .gitignore
 ├── requirements.txt
 └── README.md
 ```
@@ -35,6 +37,11 @@ spotify-db/
 ### `docs/`
 
 * **`simplified_ER_schema.png`** — simplified Entity-Relationship diagram of the database schema.
+
+### Configuration files
+
+* **`.env.example`** — template showing the environment variables required by the project.
+* **`.gitignore`** — excludes local environment files, virtual environments, and Python cache files from version control.
 
 ## Database schema
 
@@ -80,6 +87,10 @@ SPOTIFY_JSON_PATH
 SPOTIFY_USERNAME
 ```
 
+An example configuration is provided in `.env.example`.
+
+The current implementation reads these values directly from the environment. The `.env.example` file is provided as a template and is not loaded automatically.
+
 ## Usage
 
 After configuring the required environment variables, run:
@@ -88,7 +99,7 @@ After configuring the required environment variables, run:
 python -m scripts.create_database
 ```
 
-This creates the MySQL database if it does not already exist, creates the required tables, and imports the parsed Spotify data.
+The script validates the required configuration, creates the MySQL database if it does not already exist, creates the database tables, and imports the parsed Spotify data.
 
 ## Planned features
 
