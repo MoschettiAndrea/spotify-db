@@ -15,6 +15,7 @@ spotify-db/
 │   ├── database.py
 │   ├── models.py
 │   ├── parser.py
+│   ├── pipeline.py
 │   └── sync.py
 ├── scripts/
 │   ├── create_database.py
@@ -27,16 +28,17 @@ spotify-db/
 
 ### `src/`
 
-* **`config.py`** — loads database, user, and Spotify data folder configuration from environment variables.
-* **`parser.py`** — loads the Spotify JSON export files and transforms them into the tables used by the database.
+* **`config.py`** — loads database, Spotify data folder, and user configuration from environment variables and validates the required settings.
+* **`database.py`** — handles database creation, table creation, reading existing tables, data type alignment, and insertion of new rows.
 * **`models.py`** — defines the database schema using SQLAlchemy ORM models.
-* **`database.py`** — handles database creation, table creation, and data insertion.
-* **`sync.py`** — compares newly parsed data with existing database tables and identifies rows that need to be inserted.
+* **`parser.py`** — loads Spotify Extended Streaming History JSON files and transforms the data into the tables used by the database.
+* **`pipeline.py`** — coordinates the parsing, reconciliation, and insertion steps for both initial database creation and subsequent updates.
+* **`sync.py`** — provides the reconciliation logic used to compare newly parsed data with records already stored in the database.
 
 ### `scripts/`
 
-* **`create_database.py`** — creates and populates a new database from the Spotify export.
-* **`update_database.py`** — updates an existing database with data from the Spotify export, inserting only records that are not already present.
+* **`create_database.py`** — creates the MySQL database and populates it with data from a Spotify export.
+* **`update_database.py`** — updates an existing database with Spotify export data without recreating the database.
 
 ### `docs/`
 
@@ -49,7 +51,7 @@ spotify-db/
 
 ## Database schema
 
-The database currently consists of the following tables:
+The database consists of six tables:
 
 * `users`
 * `artists`
@@ -58,7 +60,7 @@ The database currently consists of the following tables:
 * `platforms`
 * `listens`
 
-The simplified Entity-Relationship schema is shown below:
+The relationships between these tables are shown in the simplified Entity-Relationship diagram below:
 
 ![Simplified ER schema](docs/simplified_ER_schema.png)
 
