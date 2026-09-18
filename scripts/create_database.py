@@ -15,17 +15,15 @@ from src.parser import (
 )
 
 
-JSON_PATH = (
-    "C:/Users/Andrea/Desktop/Spotify Data/"
-    "Spotify Extended Streaming History/"
-    "Streaming_History_Audio_2015-2016_0.json"
-)
+from src.config import JSON_PATH, USERNAME
 
 
 def main():
+    if not JSON_PATH:
+        raise SystemExit("Set SPOTIFY_JSON_PATH before running this script.")
     df = load_json(JSON_PATH)
 
-    users = create_users()
+    users = create_users(USERNAME)
     artists = create_artists(df)
     albums = create_albums(df, artists)
     songs = create_songs(df, artists, albums)

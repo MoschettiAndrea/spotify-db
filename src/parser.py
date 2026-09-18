@@ -1,7 +1,6 @@
 import json
 import pandas as pd
 
-
 def load_json(path):
     """Load a Spotify Extended Streaming History JSON file."""
     with open(path, "r", encoding="utf-8") as f:
@@ -106,12 +105,12 @@ def create_songs(df, artists, albums):
     return songs
 
 
-def create_users():
+def create_users(username):
     """Create the users table."""
 
     return pd.DataFrame({
         "user_id": [1],
-        "username": ["Andrea"],
+        "username": username,
     })
 
 
