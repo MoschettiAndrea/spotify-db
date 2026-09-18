@@ -6,11 +6,14 @@ from src.pipeline import sync_database
 
 def main():
     validate()
+
     try:
         df = load_json_folder(SPOTIFY_FOLDER_PATH)
     except FileNotFoundError as e:
         raise SystemExit(str(e))
 
+    # Both calls are no-ops if the database/tables already exist, so this
+    # script works identically whether it's the first run or a later one.
     create_database()
     engine = create_engine_connection()
     create_tables(engine)

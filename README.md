@@ -17,8 +17,7 @@ spotify-db/
 │   ├── parser.py
 │   └── sync.py
 ├── scripts/
-│   ├── create_database.py
-│   └── update_database.py
+│   └── sync_database.py
 ├── .env.example
 ├── .gitignore
 ├── requirements.txt
@@ -35,8 +34,7 @@ spotify-db/
 
 ### `scripts/`
 
-* **`create_database.py`** — creates and populates a new database from the Spotify export.
-* **`update_database.py`** — updates an existing database with data from the Spotify export, inserting only records that are not already present.
+* **`sync_database.py`** — creates the database if it does not exist, or updates the existing database by adding records from the Spotify export that are not already present.
 
 ### `docs/`
 
@@ -97,26 +95,14 @@ The current implementation reads these values directly from the environment. The
 
 ## Usage
 
-### Create the database
-
-To create a new database from the Spotify export, configure the required environment variables and run:
-
+Configure the required environment variables, then run:
 ```bash
-python -m scripts.create_database
+python -m scripts.sync_database
 ```
 
-The script validates the configuration, loads the Spotify JSON files, creates the MySQL database if it does not already exist, creates the database tables, and imports the parsed data.
+The script validates the configuration, loads the Spotify JSON files, creates the MySQL database and tables if they don't already exist, and inserts only the data that isn't already stored.
 
-### Update an existing database
-
-Once the database has been created, new Spotify export data can be added without rebuilding the database.
-
-Run:
-
-```bash
-python -m scripts.update_database
-```
-
+The same command works for the first run and for every subsequent one. Point `SPOTIFY_FOLDER_PATH` at a folder with new export data and re-run it to bring the database up to date.
 ## Data exploration and visualization
 
 Notebooks for exploring the resulting database and analyzing listening habits are planned.

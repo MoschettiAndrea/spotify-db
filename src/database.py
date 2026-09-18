@@ -66,18 +66,3 @@ def insert_new_rows(engine, users, artists, albums, songs, platforms, listens):
             if frame.empty:
                 continue
             frame.to_sql(name, connection, if_exists="append", index=False)
-
-
-def insert_tables(engine, users, artists, albums, songs, platforms, listens):
-    """Insert the prepared DataFrames into the database, as one transaction."""
-    tables = {
-        "users": users,
-        "artists": artists,
-        "albums": albums,
-        "songs": songs,
-        "platforms": platforms,
-        "listens": listens,
-    }
-    with engine.begin() as connection:
-        for name, frame in tables.items():
-            frame.to_sql(name, connection, if_exists="append", index=False)
