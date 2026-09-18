@@ -11,24 +11,18 @@ from src.parser import (
     create_platforms,
     create_songs,
     create_users,
-    load_json,
+    load_json_folder,
 )
-
-
-from src.config import DB_PASSWORD, JSON_PATH, USERNAME
+from src.config import validate, SPOTIFY_FOLDER_PATH, USERNAME
 
 
 def main():
-    if not DB_PASSWORD:
-        raise SystemExit(
-            "Set SPOTIFY_DB_PASSWORD before running this script."
-        )
+    validate()
 
-    if not JSON_PATH:
-        raise SystemExit(
-            "Set SPOTIFY_JSON_PATH before running this script."
-        )
-    df = load_json(JSON_PATH)
+    try:
+        df = load_json_folder(SPOTIFY_FOLDER_PATH)
+    except FileNotFoundError as e:
+        raise SystemExit(str(e))
 
     users = create_users(USERNAME)
     artists = create_artists(df)

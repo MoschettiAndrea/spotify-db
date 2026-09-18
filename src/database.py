@@ -7,14 +7,13 @@ def _connection_url(database=None):
     base = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/"
     return f"{base}{database}" if database else base
 
+def create_engine_connection(database=DB_NAME):
+    return create_engine(_connection_url(database))
+
 def create_database(database=DB_NAME):
     engine = create_engine(_connection_url())
     with engine.connect() as connection:
         connection.execute(text(f"CREATE DATABASE IF NOT EXISTS {database}"))
-
-def create_engine_connection(database=DB_NAME):
-    return create_engine(_connection_url(database))
-
 
 def create_tables(engine):
     """Create all database tables."""

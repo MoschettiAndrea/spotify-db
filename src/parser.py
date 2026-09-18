@@ -1,5 +1,6 @@
 import json
 import pandas as pd
+from pathlib import Path
 
 def load_json(path):
     """Load a Spotify Extended Streaming History JSON file."""
@@ -8,6 +9,17 @@ def load_json(path):
 
     return pd.DataFrame(data)
 
+def load_json_folder(folder_path):
+    """Load and concatenate all Spotify Extended Streaming History JSON files in a folder."""
+    json_files = sorted(Path(folder_path).glob("*.json"))
+
+    if not json_files:
+        raise FileNotFoundError(f"No JSON files found in: {folder_path}")
+
+    return pd.concat(
+        [load_json(f) for f in json_files],
+        ignore_index=True,
+    )
 
 def create_artists(df):
     """Create the artists table from Spotify streaming history."""
@@ -156,23 +168,18 @@ def create_listens(df, songs, platforms):
         ]
     ].copy()
 
-    platform_id_map = (
-        platforms
-        .set_index("platform")["platform_id"]
-    )
+    platform_id_map = platforms.set_index("platform")["platform_id"]
+    song_id_map = songs.set_index("spotify_track_uri")["song_id"]
 
-    song_id_map = (
-        songs
-        .set_index("spotify_track_uri")["song_id"]
-    )
+    listens["platform_id"] = listens["platform"].map(platform_id_map)
+    listens["song_id"] = listens["spotify_track_uri"].map(song_id_map)
 
-    listens["platform_id"] = listens["platform"].map(
-        platform_id_map
-    )
+    # Drop podcast/episode listens and anything else without a matching song —
+    # this schema only models music tracks for now.
+    listens = listens.dropna(subset=["song_id"])
 
-    listens["song_id"] = listens["spotify_track_uri"].map(
-        song_id_map
-    )
+    listens["song_id"] = listens["song_id"].astype(int)
+
 
     listens = listens[
         [
