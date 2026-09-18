@@ -15,12 +15,19 @@ from src.parser import (
 )
 
 
-from src.config import JSON_PATH, USERNAME
+from src.config import DB_PASSWORD, JSON_PATH, USERNAME
 
 
 def main():
+    if not DB_PASSWORD:
+        raise SystemExit(
+            "Set SPOTIFY_DB_PASSWORD before running this script."
+        )
+
     if not JSON_PATH:
-        raise SystemExit("Set SPOTIFY_JSON_PATH before running this script.")
+        raise SystemExit(
+            "Set SPOTIFY_JSON_PATH before running this script."
+        )
     df = load_json(JSON_PATH)
 
     users = create_users(USERNAME)
