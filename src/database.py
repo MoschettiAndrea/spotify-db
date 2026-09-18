@@ -1,5 +1,5 @@
 import pandas as pd
-from sqlalchemy import create_engine, text, Boolean
+from sqlalchemy import create_engine, text, Boolean, DateTime, Integer, BigInteger
 from .models import Base
 from .config import DB_USER, DB_PASSWORD, DB_HOST, DB_NAME
 
@@ -21,15 +21,33 @@ def create_tables(engine):
 
     Base.metadata.create_all(engine)
 
-def read_table(engine, table_name):
-    df = pd.read_sql_table(table_name, engine)
-
+def align_dtypes(df, table_name):
+    """Normalize a DataFrame's dtypes to a single schema-driven policy, so
+    dtype-based comparisons in sync.reconcile are meaningful regardless of
+    whether the data came from parsing JSON or reading the DB back."""
+    df = df.copy()
     table = Base.metadata.tables[table_name]
-    bool_cols = [c.name for c in table.columns if isinstance(c.type, Boolean)]
-    for col in bool_cols:
-        df[col] = df[col].astype(bool)
+
+    for column in table.columns:
+        if column.name not in df.columns:
+            continue
+        if isinstance(column.type, Boolean):
+            df[column.name] = df[column.name].astype(bool)
+        elif isinstance(column.type, DateTime):
+            df[column.name] = (
+                pd.to_datetime(df[column.name], utc=True)
+                .dt.tz_localize(None)
+                .astype("datetime64[us]")
+            )
+        elif isinstance(column.type, (Integer, BigInteger)) and column.nullable:
+            df[column.name] = df[column.name].astype("float64")
 
     return df
+
+
+def read_table(engine, table_name):
+    df = pd.read_sql_table(table_name, engine)
+    return align_dtypes(df, table_name)
 
 def insert_new_rows(engine, users, artists, albums, songs, platforms, listens):
     """Insert only the new rows for each table, skipping empty frames.
