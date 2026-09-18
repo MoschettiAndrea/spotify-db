@@ -168,6 +168,9 @@ def create_listens(df, songs, platforms):
         ]
     ].copy()
 
+    # Remove completely identical listening records
+    listens = listens.drop_duplicates().reset_index(drop=True)
+
     platform_id_map = platforms.set_index("platform")["platform_id"]
     song_id_map = songs.set_index("spotify_track_uri")["song_id"]
 
