@@ -99,17 +99,15 @@ def create_songs(df, artists, albums):
     artist_id_map = artists.set_index("name")["artist_id"]
 
     songs["artist_id"] = songs["artist_name"].map(artist_id_map)
-
     songs["album_id"] = songs.set_index(
         ["artist_id", "album_name"]
     ).index.map(album_id_map)
 
+    songs = songs.dropna(subset=["album_id"])
+    songs["album_id"] = songs["album_id"].astype(int)
+
     songs = songs[
-        [
-            "name",
-            "album_id",
-            "spotify_track_uri",
-        ]
+        ["name", "album_id", "spotify_track_uri"]
     ].reset_index(drop=True)
 
     songs.insert(0, "song_id", range(1, len(songs) + 1))
@@ -126,7 +124,7 @@ def create_users(username):
     })
 
 
-def create_platforms(df):
+def create_platforms(df, user_id):
     """Create the platforms table."""
 
     platforms = (
@@ -136,13 +134,8 @@ def create_platforms(df):
         .reset_index(drop=True)
     )
 
-    platforms.insert(
-        0,
-        "platform_id",
-        range(1, len(platforms) + 1),
-    )
-
-    platforms.insert(1, "user_id", 1)
+    platforms.insert(0, "platform_id", range(1, len(platforms) + 1))
+    platforms.insert(1, "user_id", user_id)
 
     return platforms
 

@@ -43,9 +43,12 @@ def main():
     songs_full = pd.concat([existing_songs, songs_new], ignore_index=True)
 
     # --- platforms ---
+    user_id = user_id_map.loc[USERNAME]
+
     existing_platforms = read_table(engine, "platforms")
     platform_id_map, platforms_new = reconcile(
-        create_platforms(df), existing_platforms, ["user_id", "platform"], "platform_id"
+        create_platforms(df, user_id=user_id), existing_platforms,
+        ["user_id", "platform"], "platform_id",
     )
     platforms_full = pd.concat([existing_platforms, platforms_new], ignore_index=True)
 

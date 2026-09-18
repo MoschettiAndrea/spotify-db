@@ -31,17 +31,10 @@ def read_table(engine, table_name):
 
     return df
 
-# src/database.py
-def insert_new_rows(
-    engine,
-    users,
-    artists,
-    albums,
-    songs,
-    platforms,
-    listens,
-):
-    """Insert only the new rows for each table, skipping empty frames."""
+def insert_new_rows(engine, users, artists, albums, songs, platforms, listens):
+    """Insert only the new rows for each table, skipping empty frames.
+    All inserts happen in a single transaction: a failure partway through
+    rolls back everything, rather than leaving the DB partially updated."""
     tables = {
         "users": users,
         "artists": artists,
@@ -50,61 +43,23 @@ def insert_new_rows(
         "platforms": platforms,
         "listens": listens,
     }
-    for name, frame in tables.items():
-        if frame.empty:
-            continue
-        frame.to_sql(name, engine, if_exists="append", index=False)
+    with engine.begin() as connection:
+        for name, frame in tables.items():
+            if frame.empty:
+                continue
+            frame.to_sql(name, connection, if_exists="append", index=False)
 
 
-def insert_tables(
-    engine,
-    users,
-    artists,
-    albums,
-    songs,
-    platforms,
-    listens,
-):
-    """Insert the prepared DataFrames into the database."""
-
-    users.to_sql(
-        "users",
-        engine,
-        if_exists="append",
-        index=False,
-    )
-
-    artists.to_sql(
-        "artists",
-        engine,
-        if_exists="append",
-        index=False,
-    )
-
-    albums.to_sql(
-        "albums",
-        engine,
-        if_exists="append",
-        index=False,
-    )
-
-    songs.to_sql(
-        "songs",
-        engine,
-        if_exists="append",
-        index=False,
-    )
-
-    platforms.to_sql(
-        "platforms",
-        engine,
-        if_exists="append",
-        index=False,
-    )
-
-    listens.to_sql(
-        "listens",
-        engine,
-        if_exists="append",
-        index=False,
-    )
+def insert_tables(engine, users, artists, albums, songs, platforms, listens):
+    """Insert the prepared DataFrames into the database, as one transaction."""
+    tables = {
+        "users": users,
+        "artists": artists,
+        "albums": albums,
+        "songs": songs,
+        "platforms": platforms,
+        "listens": listens,
+    }
+    with engine.begin() as connection:
+        for name, frame in tables.items():
+            frame.to_sql(name, connection, if_exists="append", index=False)

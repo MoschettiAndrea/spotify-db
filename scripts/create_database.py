@@ -28,7 +28,7 @@ def main():
     artists = create_artists(df)
     albums = create_albums(df, artists)
     songs = create_songs(df, artists, albums)
-    platforms = create_platforms(df)
+    platforms = create_platforms(df, user_id=users["user_id"].iloc[0])
     listens = create_listens(df, songs, platforms)
 
     create_database()
