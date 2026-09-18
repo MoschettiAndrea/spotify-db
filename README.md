@@ -15,6 +15,7 @@ spotify-db/
 │   ├── database.py
 │   ├── models.py
 │   ├── parser.py
+│   ├── pipeline.py
 │   └── sync.py
 ├── scripts/
 │   └── sync_database.py
@@ -27,9 +28,10 @@ spotify-db/
 ### `src/`
 
 * **`config.py`** — loads database, user, and Spotify data folder configuration from environment variables.
-* **`parser.py`** — loads the Spotify JSON export files and transforms them into the tables used by the database.
-* **`models.py`** — defines the database schema using SQLAlchemy ORM models.
 * **`database.py`** — handles database creation, table creation, and data insertion.
+* **`models.py`** — defines the database schema using SQLAlchemy ORM models.
+* **`parser.py`** — loads the Spotify JSON export files and transforms them into the tables used by the database.
+* **`pipeline.py`** — coordinates the parsing, reconciliation, and insertion steps for both initial database creation and subsequent updates.
 * **`sync.py`** — compares newly parsed data with existing database tables and identifies rows that need to be inserted.
 
 ### `scripts/`
