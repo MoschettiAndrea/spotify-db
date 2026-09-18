@@ -9,8 +9,9 @@ The project parses Spotify's JSON streaming history and organizes the data into 
 ```text
 spotify-db/
 ├── docs/
-│   └── er-schema.png
+│   └── simplified_ER_schema.png
 ├── src/
+│   ├── config.py
 │   ├── database.py
 │   ├── models.py
 │   └── parser.py
@@ -22,6 +23,7 @@ spotify-db/
 
 ### `src/`
 
+* **`config.py`** — loads database, user, and input file configuration from environment variables.
 * **`parser.py`** — loads the Spotify JSON export and transforms it into the tables used by the database.
 * **`models.py`** — defines the database schema using SQLAlchemy ORM models.
 * **`database.py`** — handles database creation, table creation, and data insertion.
@@ -32,7 +34,7 @@ spotify-db/
 
 ### `docs/`
 
-* **`er-schema.png`** — simplified Entity-Relationship diagram of the database schema.
+* **`simplified_ER_schema.png`** — simplified Entity-Relationship diagram of the database schema.
 
 ## Database schema
 
@@ -52,7 +54,7 @@ The simplified Entity-Relationship schema is shown below:
 ## Requirements
 
 * Python 3
-* MySQL
+* MySQL Server
 * Python packages listed in `requirements.txt`
 
 Install the Python dependencies with:
@@ -63,17 +65,30 @@ pip install -r requirements.txt
 
 A running MySQL Server installation is also required.
 
+## Configuration
+
+The project uses environment variables for database credentials and other machine-specific settings.
+
+The following variables are supported:
+
+```text
+SPOTIFY_DB_USER
+SPOTIFY_DB_PASSWORD
+SPOTIFY_DB_HOST
+SPOTIFY_DB_NAME
+SPOTIFY_JSON_PATH
+SPOTIFY_USERNAME
+```
+
 ## Usage
 
-Place your Spotify Extended Streaming History JSON files somewhere accessible to the project and configure the input path in `scripts/create_database.py`.
-
-Then run:
+After configuring the required environment variables, run:
 
 ```bash
 python -m scripts.create_database
 ```
 
-This creates the MySQL database, creates the tables, and imports the parsed Spotify data.
+This creates the MySQL database if it does not already exist, creates the required tables, and imports the parsed Spotify data.
 
 ## Planned features
 
