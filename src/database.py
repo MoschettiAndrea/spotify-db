@@ -1,4 +1,5 @@
-from sqlalchemy import create_engine, text
+import pandas as pd
+from sqlalchemy import create_engine, text, Boolean
 from .models import Base
 from .config import DB_USER, DB_PASSWORD, DB_HOST, DB_NAME
 
@@ -19,6 +20,40 @@ def create_tables(engine):
     """Create all database tables."""
 
     Base.metadata.create_all(engine)
+
+def read_table(engine, table_name):
+    df = pd.read_sql_table(table_name, engine)
+
+    table = Base.metadata.tables[table_name]
+    bool_cols = [c.name for c in table.columns if isinstance(c.type, Boolean)]
+    for col in bool_cols:
+        df[col] = df[col].astype(bool)
+
+    return df
+
+# src/database.py
+def insert_new_rows(
+    engine,
+    users,
+    artists,
+    albums,
+    songs,
+    platforms,
+    listens,
+):
+    """Insert only the new rows for each table, skipping empty frames."""
+    tables = {
+        "users": users,
+        "artists": artists,
+        "albums": albums,
+        "songs": songs,
+        "platforms": platforms,
+        "listens": listens,
+    }
+    for name, frame in tables.items():
+        if frame.empty:
+            continue
+        frame.to_sql(name, engine, if_exists="append", index=False)
 
 
 def insert_tables(

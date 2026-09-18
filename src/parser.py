@@ -208,9 +208,7 @@ def create_listens(df, songs, platforms):
         range(1, len(listens) + 1),
     )
 
-    listens["ts"] = pd.to_datetime(
-        listens["ts"],
-        utc=True,
-    )
+    listens["ts"] = pd.to_datetime(listens["ts"], utc=True).dt.tz_localize(None)
+    listens["offline_timestamp"] = pd.to_numeric(listens["offline_timestamp"], errors="coerce")
 
     return listens
