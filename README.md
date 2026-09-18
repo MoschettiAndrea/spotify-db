@@ -14,9 +14,11 @@ spotify-db/
 │   ├── config.py
 │   ├── database.py
 │   ├── models.py
-│   └── parser.py
+│   ├── parser.py
+│   └── sync.py
 ├── scripts/
-│   └── create_database.py
+│   ├── create_database.py
+│   └── update_database.py
 ├── .env.example
 ├── .gitignore
 ├── requirements.txt
@@ -25,14 +27,16 @@ spotify-db/
 
 ### `src/`
 
-* **`config.py`** — loads database, user, and input file configuration from environment variables.
-* **`parser.py`** — loads the Spotify JSON export and transforms it into the tables used by the database.
+* **`config.py`** — loads database, user, and Spotify data folder configuration from environment variables.
+* **`parser.py`** — loads the Spotify JSON export files and transforms them into the tables used by the database.
 * **`models.py`** — defines the database schema using SQLAlchemy ORM models.
 * **`database.py`** — handles database creation, table creation, and data insertion.
+* **`sync.py`** — compares newly parsed data with existing database tables and identifies rows that need to be inserted.
 
 ### `scripts/`
 
-* **`create_database.py`** — runs the complete pipeline to create and populate the database from a Spotify export.
+* **`create_database.py`** — creates and populates a new database from the Spotify export.
+* **`update_database.py`** — updates an existing database with data from the Spotify export, inserting only records that are not already present.
 
 ### `docs/`
 
@@ -83,7 +87,7 @@ SPOTIFY_DB_USER
 SPOTIFY_DB_PASSWORD
 SPOTIFY_DB_HOST
 SPOTIFY_DB_NAME
-SPOTIFY_JSON_PATH
+SPOTIFY_FOLDER_PATH
 SPOTIFY_USERNAME
 ```
 
@@ -93,25 +97,29 @@ The current implementation reads these values directly from the environment. The
 
 ## Usage
 
-After configuring the required environment variables, run:
+### Create the database
+
+To create a new database from the Spotify export, configure the required environment variables and run:
 
 ```bash
 python -m scripts.create_database
 ```
 
-The script validates the required configuration, creates the MySQL database if it does not already exist, creates the database tables, and imports the parsed Spotify data.
+The script validates the configuration, loads the Spotify JSON files, creates the MySQL database if it does not already exist, creates the database tables, and imports the parsed data.
 
-## Planned features
+### Update an existing database
 
-### Database updates
+Once the database has been created, new Spotify export data can be added without rebuilding the database.
 
-Add `update_database.py` to support importing new Spotify Extended Streaming History exports without rebuilding the database from scratch.
+Run:
 
-The update process will identify new artists, albums, songs, platforms, and listening events and add only the data that is not already present.
+```bash
+python -m scripts.update_database
+```
 
-### Data exploration and visualization
+## Data exploration and visualization
 
-Add notebooks for exploring the resulting database and analyzing listening habits through statistics and visualizations.
+Notebooks for exploring the resulting database and analyzing listening habits are planned.
 
 Planned analyses include:
 
@@ -124,4 +132,6 @@ Planned analyses include:
 
 ## Work in progress
 
-This project is currently being developed as a personal data engineering and analysis project. The database creation pipeline is implemented, while incremental database updates and data exploration/visualization notebooks are planned.
+This project is currently being developed as a personal data engineering and analysis project.
+
+The database creation and incremental update pipelines are implemented. Data exploration and visualization notebooks are planned.
