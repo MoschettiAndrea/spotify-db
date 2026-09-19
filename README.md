@@ -11,7 +11,7 @@ spotify-db/
 ├── docs/
 │   └── simplified_ER_schema.png
 ├── notebooks/
-│   └── listening_history_stats.ipynb
+│   └── listening_stats.ipynb
 ├── src/
 │   ├── config.py
 │   ├── database.py
@@ -42,7 +42,7 @@ spotify-db/
 
 ### `notebooks/`
 
-* **`listening_history_stats.ipynb`** — loads data from the database and provides statistics and visualizations of listening activity.
+* **`listening_stats.ipynb`** — loads data from the database and provides statistics and visualizations of listening activity.
 
 ### `docs/`
 
@@ -114,7 +114,7 @@ The same command is therefore used both for the initial database creation and fo
 
 ## Data exploration
 
-The `notebooks/listening_history_stats.ipynb` notebook loads data from the tables created by `scripts/sync_database.py`. It only reads from the database; it does not use the original JSON files or modify the database.
+The `notebooks/listening_stats.ipynb` notebook loads data from the tables created by `scripts/sync_database.py`. It only reads from the database; it does not use the original JSON files or modify the database.
 
 The analysis includes:
 
