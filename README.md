@@ -112,7 +112,7 @@ On subsequent runs, it compares the parsed data with the existing database and i
 
 The same command is therefore used both for the initial database creation and for later updates. To add new Spotify export data, point `SPOTIFY_FOLDER_PATH` to the folder containing the export and run the script again.
 
-## Data exploration
+## Listening Statistics
 
 The `notebooks/listening_stats.ipynb` notebook loads data from the tables created by `scripts/sync_database.py`. It only reads from the database; it does not use the original JSON files or modify the database.
 
