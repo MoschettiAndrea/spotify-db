@@ -92,9 +92,7 @@ SPOTIFY_FOLDER_PATH
 SPOTIFY_USERNAME
 ```
 
-An example configuration is provided in `.env.example`.
-
-The `.env.example` file is a template and is not loaded automatically. Set the variables in the environment before running the scripts.
+An example configuration is provided in `.env.example`: copy it to `.env` and fill in real values. `config.py` loads `.env` automatically on import; variables already set in the real environment take priority over it.
 
 ## Usage
 
