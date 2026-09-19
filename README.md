@@ -2,7 +2,7 @@
 
 A relational database built from Spotify Extended Streaming History exports.
 
-The project parses Spotify's JSON streaming history and organizes the data into a relational schema using MySQL and SQLAlchemy. The database separates artists, albums, songs, listening platforms, users, and individual listening events.
+The project parses Spotify's JSON streaming history and organizes it into a MySQL database using SQLAlchemy. The database separates artists, albums, songs, platforms, users, and individual listening events.
 
 ## Project structure
 
@@ -10,6 +10,8 @@ The project parses Spotify's JSON streaming history and organizes the data into 
 spotify-db/
 ├── docs/
 │   └── simplified_ER_schema.png
+├── notebooks/
+│   └── listening_history_stats.ipynb
 ├── src/
 │   ├── config.py
 │   ├── database.py
@@ -27,25 +29,24 @@ spotify-db/
 
 ### `src/`
 
-* **`config.py`** — loads database, user, and Spotify data folder configuration from environment variables.
+* **`config.py`** — reads database, user, and Spotify data folder settings from environment variables.
 * **`database.py`** — handles database creation, table creation, and data insertion.
 * **`models.py`** — defines the database schema using SQLAlchemy ORM models.
-* **`parser.py`** — loads the Spotify JSON export files and transforms them into the tables used by the database.
-* **`pipeline.py`** — coordinates the parsing, reconciliation, and insertion steps for both initial database creation and subsequent updates.
-* **`sync.py`** — compares newly parsed data with existing database tables and identifies rows that need to be inserted.
+* **`parser.py`** — loads the Spotify JSON export files and transforms the data into the structures used by the database.
+* **`pipeline.py`** — coordinates the parsing, reconciliation, and database update steps.
+* **`sync.py`** — compares parsed data with existing database records and identifies new records to insert.
 
 ### `scripts/`
 
-* **`sync_database.py`** — creates the database if it does not exist, or updates the existing database by adding records from the Spotify export that are not already present.
+* **`sync_database.py`** — main entry point for creating the database or updating an existing one with new Spotify data.
+
+### `notebooks/`
+
+* **`listening_history_stats.ipynb`** — loads data from the database and provides statistics and visualizations of listening activity.
 
 ### `docs/`
 
 * **`simplified_ER_schema.png`** — simplified Entity-Relationship diagram of the database schema.
-
-### Configuration files
-
-* **`.env.example`** — template showing the environment variables required by the project.
-* **`.gitignore`** — excludes local environment files, virtual environments, and Python cache files from version control.
 
 ## Database schema
 
@@ -93,23 +94,29 @@ SPOTIFY_USERNAME
 
 An example configuration is provided in `.env.example`.
 
-The current implementation reads these values directly from the environment. The `.env.example` file is provided as a template and is not loaded automatically.
+The `.env.example` file is a template and is not loaded automatically. Set the variables in the environment before running the scripts.
 
 ## Usage
 
-Configure the required environment variables, then run:
+Once the environment variables are configured, run:
+
 ```bash
 python -m scripts.sync_database
 ```
 
-The script validates the configuration, loads the Spotify JSON files, creates the MySQL database and tables if they don't already exist, and inserts only the data that isn't already stored.
+The script validates the configuration, loads the Spotify JSON files, and creates or updates the database as needed.
 
-The same command works for the first run and for every subsequent one. Point `SPOTIFY_FOLDER_PATH` at a folder with new export data and re-run it to bring the database up to date.
-## Data exploration and visualization
+On the first run, it creates the database and its tables and imports the available listening history.
 
-Notebooks for exploring the resulting database and analyzing listening habits are planned.
+On subsequent runs, it compares the parsed data with the existing database and inserts records that are not already stored.
 
-Planned analyses include:
+The same command is therefore used both for the initial database creation and for later updates. To add new Spotify export data, point `SPOTIFY_FOLDER_PATH` to the folder containing the export and run the script again.
+
+## Data exploration
+
+The `notebooks/listening_history_stats.ipynb` notebook loads data from the tables created by `scripts/sync_database.py`. It only reads from the database; it does not use the original JSON files or modify the database.
+
+The analysis includes:
 
 * Listening activity over time
 * Most played artists, albums, and songs
@@ -117,9 +124,3 @@ Planned analyses include:
 * Platform usage
 * Temporal listening patterns
 * Other statistics derived from the relational database
-
-## Work in progress
-
-This project is currently being developed as a personal data engineering and analysis project.
-
-The database creation and incremental update pipelines are implemented. Data exploration and visualization notebooks are planned.
