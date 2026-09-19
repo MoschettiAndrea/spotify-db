@@ -1,4 +1,8 @@
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 DB_USER = os.environ.get("SPOTIFY_DB_USER", "root")
 DB_PASSWORD = os.environ.get("SPOTIFY_DB_PASSWORD")
@@ -8,6 +12,7 @@ DB_NAME = os.environ.get("SPOTIFY_DB_NAME", "spotify_db")
 SPOTIFY_FOLDER_PATH = os.environ.get("SPOTIFY_FOLDER_PATH")
 
 USERNAME = os.environ.get("SPOTIFY_USERNAME", "Andrea")
+
 
 def validate():
     """Raise if required configuration is missing."""
